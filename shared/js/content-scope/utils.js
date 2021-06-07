@@ -108,6 +108,29 @@ export function overrideProperty (name, prop) {
 // TODO make rollup aware of this so it can tree shake
 const mozProxies = 'wrappedJSObject' in window
 
+export function callFunction (object, fn, ...args) {
+    if (mozProxies) {
+        const argsOut = args.map((arg) => {
+            if (typeof arg === 'function') {
+                // Export any functions that are arguments
+                return exportFunction(arg, object.wrappedJSObject)
+            }
+            return arg
+        })
+        object.wrappedJSObject[fn].apply(object, argsOut)
+    } else {
+        object[fn].apply(object, args)
+    }
+}
+
+export function hasProperty (object, prop) {
+    let checkObject = object
+    if (mozProxies) {
+        checkObject = object.wrappedJSObject
+    }
+    return prop in checkObject
+}
+
 export function defineProperty (object, propertyName, descriptor) {
     if (mozProxies) {
         const usedObj = object.wrappedJSObject

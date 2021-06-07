@@ -22,6 +22,7 @@ export async function loadProtections () {
     }
     const protectionNames = [
         'audio',
+        'banner',
         'battery',
         'canvas',
         'cookie',
